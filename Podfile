@@ -4,11 +4,12 @@
 target 'Instagram' do
   # Comment the next line if you're not using Swift and don't want to use dynamic frameworks
   use_frameworks!
+	pod 'Parse'
 
   # Pods for Instagram
 
   target 'InstagramTests' do
-  	pod 'Parse'
+  	
     inherit! :search_paths
     # Pods for testing
   end
