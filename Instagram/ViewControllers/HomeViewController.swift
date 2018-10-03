@@ -8,6 +8,7 @@
 
 import UIKit
 import Parse
+import ParseUI
 
 class HomeViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
 
@@ -18,9 +19,6 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
     
     @objc func fetchPosts(){
         let query = Post.query()
-        query?.whereKey("likesCount", greaterThan: 100)
-        query?.order(byDescending: "createdAt")
-        query?.includeKey("author")
         query?.limit = 20
         
         // fetch data asynchronously
@@ -45,9 +43,8 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
         refreshControl.addTarget(self, action:#selector(fetchPosts), for: .valueChanged)
         tableView.insertSubview(refreshControl, at: 0)
         
-        
-        
         fetchPosts()
+        tableView.reloadData()
     }
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return posts.count
@@ -57,17 +54,26 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
         let cell = tableView.dequeueReusableCell(withIdentifier: "feedCell", for: indexPath) as! FeedCell
         let post = posts[indexPath.row]
         
-        if let image : PFFile = post.media {
-            image.getDataInBackground { (data,error) in
-                if (error != nil){
-                    print(error.debugDescription)
+        print(post.caption)
+        
+        if let imageFile : PFFile = post.media {
+            imageFile.getDataInBackground(block: { (data, error) in
+                if error == nil {
+                    DispatchQueue.main.async {
+                        // Async main thread
+                        let image = UIImage(data: data!)
+                        cell.postImage.image = image
+                    }
+                } else {
+                    print(error!.localizedDescription)
                 }
-                else{
-                    cell.postImage.image = UIImage(data: data!)
-                }
-            }
+            })
         }
         cell.postTextLabel.text = post.caption
+        
+        
+        print("CELL POST TEXT: " + cell.postTextLabel.text!)
+        
         return cell
     }
 

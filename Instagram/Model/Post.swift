@@ -42,9 +42,9 @@ class Post: PFObject, PFSubclassing {
         post.caption = caption!
         post.likesCount = 0
         post.commentsCount = 0
-        
         // Save object (following function will save the object in Parse asynchronously)
         post.saveInBackground(block: completion)
+        
     }
     
     /**
