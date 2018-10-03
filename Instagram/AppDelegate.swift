@@ -24,6 +24,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             })
         )
         
+
+        
         // check if user is logged in.
  
         

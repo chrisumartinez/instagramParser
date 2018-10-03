@@ -15,6 +15,26 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
     var posts : [Post] = []
     var refreshControl : UIRefreshControl!
     
+    
+    @objc func fetchPosts(){
+        let query = Post.query()
+        query?.whereKey("likesCount", greaterThan: 100)
+        query?.order(byDescending: "createdAt")
+        query?.includeKey("author")
+        query?.limit = 20
+        
+        // fetch data asynchronously
+        query?.findObjectsInBackground(block: { (posts, error) in
+            if let posts = posts {
+                self.posts = posts as! [Post]
+                self.tableView.reloadData()
+                self.refreshControl.endRefreshing()
+            } else {
+                print(error.debugDescription)
+            }
+        } )
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         tableView.delegate = self
@@ -34,7 +54,7 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "FeedCell", for: indexPath) as! FeedCell
+        let cell = tableView.dequeueReusableCell(withIdentifier: "feedCell", for: indexPath) as! FeedCell
         let post = posts[indexPath.row]
         
         if let image : PFFile = post.media {
@@ -51,26 +71,4 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
         return cell
     }
 
-    @objc func fetchPosts(){
-        let query = Post.query()
-        query?.whereKey("likesCount", greaterThan: 100)
-        query?.order(byDescending: "createdAt")
-        query?.includeKey("author")
-        query?.limit = 20
-        
-        
-        // fetch data asynchronously
-        query?.findObjectsInBackground { (posts, error) in
-            if let posts = posts {
-                self.posts = posts as! [Post]
-                self.tableView.reloadData()
-                self.refreshControl.endRefreshing()
-                // do something with the array of object returned by the call
-            } else {
-                print(error.debugDescription)
-            }
-            }
-        
-        print(posts)
-    }
 }
