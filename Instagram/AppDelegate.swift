@@ -13,8 +13,8 @@ import Parse
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
     var window: UIWindow?
-
-
+    
+    
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         Parse.initialize(
             with: ParseClientConfiguration(block: { (configuration: ParseMutableClientConfiguration) -> Void in
@@ -23,6 +23,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 configuration.server = "https://desolate-wave-97894.herokuapp.com/parse"
             })
         )
+        
+        // check if user is logged in.
+ 
         
         // Override point for customization after application launch.
         return true
