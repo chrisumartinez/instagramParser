@@ -16,9 +16,18 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
     var posts : [Post] = []
     var refreshControl : UIRefreshControl!
     
+    @IBAction func onLogOut(_ sender: Any) {
+        PFUser.logOutInBackground { (error) in
+            if (error != nil) {
+                print(error.debugDescription)
+            }
+        }
+        self.performSegue(withIdentifier: "LogoutSegue", sender: nil)
+    }
     
     @objc func fetchPosts(){
         let query = Post.query()
+        query?.order(byDescending: "createdAt")
         query?.limit = 20
         
         // fetch data asynchronously
@@ -53,9 +62,7 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "feedCell", for: indexPath) as! FeedCell
         let post = posts[indexPath.row]
-        
-        print(post.caption)
-        
+    
         if let imageFile : PFFile = post.media {
             imageFile.getDataInBackground(block: { (data, error) in
                 if error == nil {
@@ -70,10 +77,6 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
             })
         }
         cell.postTextLabel.text = post.caption
-        
-        
-        print("CELL POST TEXT: " + cell.postTextLabel.text!)
-        
         return cell
     }
 

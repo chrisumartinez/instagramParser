@@ -10,42 +10,19 @@ import UIKit
 import Photos
 
 class SelectPhotoViewController: UIViewController, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
-
-    @IBAction func onImageSelect(_ sender: Any) {
-       
-        
-        let photos = PHPhotoLibrary.authorizationStatus()
-        if photos == .notDetermined{
-            PHPhotoLibrary.requestAuthorization({status in
-                if status == .authorized{
-                    // let vc = UIImagePickerController()
-                    // vc.delegate = self
-                    self.vc.allowsEditing = true
-                    self.vc.sourceType = UIImagePickerController.SourceType.photoLibrary
-                    self.present(self.vc, animated: true, completion: nil)
-                } else{}
-            })
-        }
-        
-
-        
-    }
     
-    
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-    }
     @IBOutlet weak var selectPhotoImage: UIImageView!
-    
     @IBOutlet weak var submitButton: UIButton!
     @IBOutlet weak var captionTextField: UITextField!
     
     let vc = UIImagePickerController()
     
-    var isSelected: Bool = false
-
-    
-    
+    @IBAction func onImageSelect(_ sender: Any) {
+        self.vc.allowsEditing = true
+        self.vc.sourceType = UIImagePickerController.SourceType.photoLibrary
+        self.present(self.vc, animated: true, completion: nil)
+        
+    }
     
     @IBAction func onSubmit(_ sender: Any) {
         let caption = captionTextField.text ?? ""
@@ -54,6 +31,9 @@ class SelectPhotoViewController: UIViewController, UIImagePickerControllerDelega
         
         print("Caption: " + caption)
         
+        
+        let group = DispatchGroup()
+        group.enter()
         Post.postUserImage(image: image, withCaption: caption) { (success, error) in
             if (error != nil) {
                 print("Error!")
@@ -63,10 +43,17 @@ class SelectPhotoViewController: UIViewController, UIImagePickerControllerDelega
                 print("Success!")
             }
         }
+        group.leave()
+        group.wait()
+        
+        //wait function until post is done for closure
+        performSegue(withIdentifier: "submitSegue", sender: nil)
         
     }
     
-    
+    override func didReceiveMemoryWarning() {
+        super.didReceiveMemoryWarning()
+    }
     
     override func viewDidLoad() {
         vc.delegate = self
