@@ -16,23 +16,14 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
     var posts : [Post] = []
     var refreshControl : UIRefreshControl!
     
-    @IBAction func onLogOut(_ sender: Any) {
-        PFUser.logOutInBackground { (error) in
-            if (error != nil) {
-                print(error.debugDescription)
-            }
-        }
-        self.performSegue(withIdentifier: "LogoutSegue", sender: nil)
-    }
-    
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        let cell = sender as! UITableViewCell
-        if let indexPath = tableView.indexPath(for: cell){
-            let post = posts[indexPath.row]
-            let detailViewController = segue.destination as! DetailViewController
-            detailViewController.post = post
-        }
+            let cell = sender as! UITableViewCell
+            if let indexPath = tableView.indexPath(for: cell){
+                let post = posts[indexPath.row]
+                let detailViewController = segue.destination as! DetailViewController
+                detailViewController.post = post
+            }
     }
     @objc func fetchPosts(){
         let query = Post.query()
