@@ -27,27 +27,20 @@ class SelectPhotoViewController: UIViewController, UIImagePickerControllerDelega
     @IBAction func onSubmit(_ sender: Any) {
         let caption = captionTextField.text ?? ""
         let image = selectPhotoImage.image
-        
-        
-        print("Caption: " + caption)
-        
-        
-        let group = DispatchGroup()
-        group.enter()
         Post.postUserImage(image: image, withCaption: caption) { (success, error) in
             if (error != nil) {
                 print("Error!")
                 print(error.debugDescription)
             }
             else{
-                print("Success!")
+                let alertController = UIAlertController(title: "Success!", message: "Post Has been Submitted!", preferredStyle: .alert)
+                let dismissAction = UIAlertAction(title: "Dismiss", style: .default)
+                alertController.addAction(dismissAction)
+                self.present(alertController, animated: true) { }
+                return;
             }
         }
-        group.leave()
-        group.wait()
-        
-        //wait function until post is done for closure
-        performSegue(withIdentifier: "submitSegue", sender: nil)
+
         
     }
     
