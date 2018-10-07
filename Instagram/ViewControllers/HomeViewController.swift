@@ -25,6 +25,15 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
         self.performSegue(withIdentifier: "LogoutSegue", sender: nil)
     }
     
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        let cell = sender as! UITableViewCell
+        if let indexPath = tableView.indexPath(for: cell){
+            let post = posts[indexPath.row]
+            let detailViewController = segue.destination as! DetailViewController
+            detailViewController.post = post
+        }
+    }
     @objc func fetchPosts(){
         let query = Post.query()
         query?.order(byDescending: "createdAt")
@@ -81,3 +90,4 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
     }
 
 }
+

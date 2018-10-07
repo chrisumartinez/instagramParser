@@ -7,24 +7,55 @@
 //
 
 import UIKit
+import Parse
+import ParseUI
 
 class DetailViewController: UIViewController {
-
+    
+    
+    @IBOutlet weak var postImgeView: UIImageView!
+    
+    @IBOutlet weak var createdAtLabel: UILabel!
+    @IBOutlet weak var captionLabel: UILabel!
+    
+    var post : Post?
+    
+    @IBAction func onBackButton(_ sender: Any) {
+        //self.performSegue(withIdentifier: "returnToFeedSegue", sender: nil)
+    }
     override func viewDidLoad() {
+        if let post = post{
+            captionLabel.text = post.caption
+            
+
+            let formatter = DateFormatter()
+            formatter.dateFormat = "MMMM dd, yyyy"
+            let formattedDate = formatter.string(from: post.createdAt!)
+            
+            createdAtLabel.text = formattedDate
+            
+            if let imageFile : PFFile = post.media {
+                imageFile.getDataInBackground { (data, error) in
+                    if (error != nil) {
+                        print(error.debugDescription)
+                    }
+                    else {
+                        self.postImgeView.image = UIImage(data: data!)
+                    }
+                }
+            }
+            
+            
+            
+        }
+        createdAtLabel.sizeToFit()
+        captionLabel.sizeToFit()
+        
+        
+        
         super.viewDidLoad()
 
         // Do any additional setup after loading the view.
     }
-    
-
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destination.
-        // Pass the selected object to the new view controller.
-    }
-    */
 
 }
